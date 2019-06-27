@@ -1,5 +1,18 @@
 # Reference
 
+## Project Structures
+- components
+- containers
+- redux 
+> - middlewares
+> - modules
+> - reducers
+> - store
+
+## API Server
+https://jsonplaceholder.typicode.com/
+
+
 ## Dependencies
 - redux
 - react-redux
@@ -9,16 +22,21 @@
 - immutable
 - axios
 - semantic-ui-react
+## redux
+> - createStore
+> - combineReducers
+### react-redux
+> - Ducks 구조
+### redux-actions
+> - createAction 을 통한 액션생성 자동화
+> - switch 문 대신 handleActions 사용하기
+### redux-thunk
 
-## Project Structures
-- components
-- constants
-- redux 
-> - middlewares
-> - modules
-> - reducers
-> - store
+### redux-promise-middleware
 
+### immutable
+
+### axios
 
 # Manual
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
