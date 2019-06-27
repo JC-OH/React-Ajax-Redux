@@ -6,7 +6,6 @@
 - redux 
 > - middlewares
 > - modules
-> - reducers
 > - store
 
 ## API Server
