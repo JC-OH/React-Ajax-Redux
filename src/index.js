@@ -10,9 +10,11 @@ import * as postActions from './redux/modules/post';
 
 store.subscribe(()=>console.log(store.getState().post.toObject()));
 
-store.dispatch(postActions.fetching());
-store.dispatch(postActions.create())
-store.dispatch(postActions.failure());
+//store.dispatch(postActions.fetching());
+// store.dispatch(postActions.success());
+//store.dispatch(postActions.failure());
+
+store.dispatch(postActions.getPost(1));
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

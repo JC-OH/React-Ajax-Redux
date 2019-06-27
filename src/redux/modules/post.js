@@ -1,12 +1,21 @@
 import { createAction, handleActions } from 'redux-actions'
 import { Map } from 'immutable';
+import axios from 'axios';
+
+//--------------------------------------------------
+// Methods
+//--------------------------------------------------
+function getPostAPI(postId) {
+    return axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+}
+
 
 //--------------------------------------------------
 // Actions
 //--------------------------------------------------
 // 액션 타입을 만들때 npm-module-or-app/reducer/ACTION_TYPE 의 형식으로 만들어야 합니다.
 const FETCHING   = 'post/FETCHING';
-const CREATE    = 'post/CREATE';
+const SUCCESS    = 'post/SUCCESS';
 const FAILURE   = 'post/FAILURE';
 
 const initialState = Map({
@@ -43,8 +52,32 @@ const initialState = Map({
 // }
 
 export const fetching = createAction(FETCHING);
-export const create = createAction(CREATE);
+export const success = createAction(SUCCESS);
 export const failure = createAction(FAILURE);
+
+//--------------------------------------------------
+// Middleware Actions
+//--------------------------------------------------
+// export const MiddlewareActionName = () => dispatch => {
+//     dispatch(actionName())
+// }
+
+export const getPost = (postId) => dispatch => {
+    // 먼저, 요청이 시작했다는것을 알립니다
+    dispatch(fetching());
+
+    // 요청을 시작합니다
+    // 여기서 만든 promise 를 return 해줘야, 나중에 컴포넌트에서 호출 할 때 getPost().then(...) 을 할 수 있습니다
+    return getPostAPI(postId).then(
+        (response) => {
+            // 요청이 성공했을경우, 서버 응답내용을 payload 로 설정하여 GET_POST_SUCCESS 액션을 디스패치합니다.
+            dispatch(success({postId,...response}));
+        }
+    ).catch(error => {
+        // 에러가 발생했을 경우, 에로 내용을 payload 로 설정하여 GET_POST_FAILURE 액션을 디스패치합니다.
+        dispatch(failure());
+    })
+}
 
 //--------------------------------------------------
 // Reducer
@@ -55,7 +88,7 @@ export const failure = createAction(FAILURE);
 //     switch (action.type) {
 //         case FETCHING:
 //             return state;
-//         case CREATE:
+//         case SUCCESS:
 //             return state;
 //         case FAILURE:
 //             return state;
@@ -72,7 +105,7 @@ export const failure = createAction(FAILURE);
 //             error: false
 //         }
 //     },
-//     [CREATE]: (state, action) => {
+//     [SUCCESS]: (state, action) => {
 //         return {
 //             ...state,
 //             fetching: false,
@@ -91,11 +124,17 @@ export const failure = createAction(FAILURE);
 export default handleActions({
     [FETCHING]: (state, action) => {
         return state.set('fetching', true)
-                    .set('error', false);
+                    .set('error', false)
+                    .set('postId', null)
+                    .set('post', { title: null, body: null });
     },
-    [CREATE]: (state, action) => {
+    [SUCCESS]: (state, action) => {
+        const { postId } =  action.payload
+        const { title, body } = action.payload.data;
         return state.set('fetching', false)
-                    .set('error', false);
+                    .set('error', false)
+                    .set('postId', postId)
+                    .set('post', { title, body });
     },
     [FAILURE]: (state, action) => {
         return state.set('fetching', false)

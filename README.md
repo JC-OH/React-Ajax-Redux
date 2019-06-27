@@ -24,6 +24,7 @@ https://jsonplaceholder.typicode.com/
 - semantic-ui-react
 ## redux
 > - createStore
+> - applyMiddleware
 > - combineReducers
 ### react-redux
 > - Ducks 구조
