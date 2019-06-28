@@ -18,9 +18,10 @@ function getAPI(postId) {
 // Action Types
 //--------------------------------------------------
 // 액션 타입을 만들때 npm-module-or-app/reducer/ACTION_TYPE 의 형식으로 만들어야 합니다.
-const FETCHING   = 'post/FETCHING';
-const SUCCESS    = 'post/SUCCESS';
-const FAILURE   = 'post/FAILURE';
+const GET   = 'post/GET';
+const PENDING   = 'post/GET_PENDING';
+const SUCCESS    = 'post/GET_FULFILLED';
+const FAILURE   = 'post/GET_REJECTED';
 
 //--------------------------------------------------
 // Initial State
@@ -32,7 +33,7 @@ const initialState = Map({
         body : null
     },
     comments: [],
-    fetching: false, // done!
+    pending: false, // done!
     error: false
 })
 
@@ -58,7 +59,7 @@ const initialState = Map({
 //     }
 // }
 
-export const fetching = createAction(FETCHING);
+export const pending = createAction(PENDING);
 export const success = createAction(SUCCESS);
 export const failure = createAction(FAILURE);
 
@@ -71,7 +72,7 @@ export const failure = createAction(FAILURE);
 
 export const getAsync = (postId) => dispatch => {
     // 먼저, 요청이 시작했다는것을 알립니다
-    dispatch(fetching());
+    dispatch(pending());
 
     // 요청을 시작합니다
     // 여기서 만든 promise 를 return 해줘야, 나중에 컴포넌트에서 호출 할 때 getPost().then(...) 을 할 수 있습니다
@@ -86,6 +87,11 @@ export const getAsync = (postId) => dispatch => {
     })
 }
 
+export const getPromise = (postId) => ({
+    type: GET,
+    payload: getAPI(postId)
+})
+
 //--------------------------------------------------
 // Reducer
 //--------------------------------------------------
@@ -93,7 +99,7 @@ export const getAsync = (postId) => dispatch => {
 
 // export default function reducer(state=initialState, action={}) {
 //     switch (action.type) {
-//         case FETCHING:
+//         case PENDING:
 //             return state;
 //         case SUCCESS:
 //             return state;
@@ -105,46 +111,47 @@ export const getAsync = (postId) => dispatch => {
 // }
 
 // export default handleActions({
-//     [FETCHING]: (state, action) => {
+//     [PENDING]: (state, action) => {
 //         return {
 //             ...state,
-//             fetching: true,
+//             pending: true,
 //             error: false
 //         }
 //     },
 //     [SUCCESS]: (state, action) => {
 //         return {
 //             ...state,
-//             fetching: false,
+//             pending: false,
 //             error: false
 //         }
 //     },
 //     [FAILURE]: (state, action) => {
 //         return {
 //             ...state,
-//             fetching: false,
+//             pending: false,
 //             error: true
 //         }
 //     }
 // }, initialState.toJs());
 
 export default handleActions({
-    [FETCHING]: (state, action) => {
-        return state.set('fetching', true)
+    [PENDING]: (state, action) => {
+        return state.set('pending', true)
                     .set('error', false)
                     .set('postId', null)
                     .set('post', { title: null, body: null });
     },
     [SUCCESS]: (state, action) => {
+        console.log(action.payload);
         const { postId } =  action.payload
         const { title, body } = action.payload.data;
-        return state.set('fetching', false)
+        return state.set('pending', false)
                     .set('error', false)
                     .set('postId', postId)
                     .set('post', { title, body });
     },
     [FAILURE]: (state, action) => {
-        return state.set('fetching', false)
+        return state.set('pending', false)
                     .set('error', true);
     }
 }, initialState);
