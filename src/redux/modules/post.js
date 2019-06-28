@@ -2,22 +2,29 @@ import { createAction, handleActions } from 'redux-actions'
 import { Map } from 'immutable';
 import axios from 'axios';
 
+// Custom instance defaults
+const $axios = axios.create({
+    baseURL: 'https://jsonplaceholder.typicode.com'
+});
+
 //--------------------------------------------------
 // Methods
 //--------------------------------------------------
-function getPostAPI(postId) {
-    return axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+function getAPI(postId) {
+    return $axios.get(`/posts/${postId}`)
 }
 
-
 //--------------------------------------------------
-// Actions
+// Action Types
 //--------------------------------------------------
 // 액션 타입을 만들때 npm-module-or-app/reducer/ACTION_TYPE 의 형식으로 만들어야 합니다.
 const FETCHING   = 'post/FETCHING';
 const SUCCESS    = 'post/SUCCESS';
 const FAILURE   = 'post/FAILURE';
 
+//--------------------------------------------------
+// Initial State
+//--------------------------------------------------
 const initialState = Map({
     postId : null,
     post: {
@@ -62,13 +69,13 @@ export const failure = createAction(FAILURE);
 //     dispatch(actionName())
 // }
 
-export const getPost = (postId) => dispatch => {
+export const getAsync = (postId) => dispatch => {
     // 먼저, 요청이 시작했다는것을 알립니다
     dispatch(fetching());
 
     // 요청을 시작합니다
     // 여기서 만든 promise 를 return 해줘야, 나중에 컴포넌트에서 호출 할 때 getPost().then(...) 을 할 수 있습니다
-    return getPostAPI(postId).then(
+    return getAPI(postId).then(
         (response) => {
             // 요청이 성공했을경우, 서버 응답내용을 payload 로 설정하여 GET_POST_SUCCESS 액션을 디스패치합니다.
             dispatch(success({postId,...response}));
