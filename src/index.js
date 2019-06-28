@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
 import './index.css';
 
 import store from './redux/store'
@@ -27,7 +28,10 @@ store.dispatch(postActions.getPromise(1));
 //store.dispatch(articleActions.getAsync(1));
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>, document.getElementById('root'));
 
 
 
