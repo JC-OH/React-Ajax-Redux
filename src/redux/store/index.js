@@ -6,6 +6,6 @@ import promiseMiddleware from 'redux-promise-middleware';
 
 const logger = createLogger();
 
-const store = createStore(reducers, applyMiddleware(logger, ReduxThunk, promiseMiddleware));
+const store = createStore(reducers, applyMiddleware(ReduxThunk, promiseMiddleware));
 
 export default store;

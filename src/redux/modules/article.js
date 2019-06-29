@@ -21,6 +21,10 @@ function getAPI (id) {
     return $axios.get(`/posts/${id}`)
 }
 
+function listCommentAPI (id) {
+    return $axios.get(`/posts/${id}/comments`)
+}
+
 // index() : List
 // create()
 // get()
@@ -33,8 +37,9 @@ function getAPI (id) {
 const initialState = Map({
     loading: false,
     error: false,
-    id: '',
-    article: null,
+    id: 1,
+    article: {},
+    comments:  List([]),
     // pagination: {
     //     page: 1,
     //     rowsPerPage: 5,
@@ -79,6 +84,7 @@ export const DESTORY            = 'article/DESTORY';
 export const DESTORY_SUCCESS    = 'article/DESTORY_SUCCESS';
 export const DESTORY_FAILURE    = 'article/DESTORY_FAILURE';
 
+export const COMMENT_LIST_SUCCESS   = 'comment/LIST_SUCCESS'
 
 //--------------------------------------------------
 // Actions
@@ -86,6 +92,7 @@ export const DESTORY_FAILURE    = 'article/DESTORY_FAILURE';
 export const list = createAction(LIST);
 export const listSuccess = createAction(LIST_SUCCESS);
 export const listFailure = createAction(LIST_FAILURE);
+export const listCommentSuccess = createAction(COMMENT_LIST_SUCCESS);
 
 export const get = createAction(GET);
 export const getSuccess = createAction(GET_SUCCESS);
@@ -94,6 +101,7 @@ export const getFailure = createAction(GET_FAILURE);
 export const create = createAction(CREATE);
 export const update = createAction(UPDATE);
 export const destory  = createAction(DESTORY);
+
 
 //--------------------------------------------------
 // Middleware Actions
@@ -113,13 +121,27 @@ export const listAsync = () => dispatch => {
 export const getAsync = (id) => dispatch => {
 
     dispatch(get(id));
-    return getAPI(id)
-        .then((response) => {
-            dispatch(getSuccess(response));
+
+    // return getAPI(id)
+    //     .then((response) => {
+    //         dispatch(getSuccess(response));
+    //     })
+    //     .catch((error) => {
+    //         dispatch(getFailure());
+    //     })
+
+    return Promise.all([
+            getAPI(id),
+            listCommentAPI(id)
+        ])
+        .then(response => {
+            dispatch(getSuccess(response[0]));
+            dispatch(listCommentSuccess(response[1]));
         })
-        .catch((error) => {
-            dispatch(getFailure());
+        .catch(error=>{
+            dispatch(listFailure());
         })
+
 }
 
 //--------------------------------------------------
@@ -156,5 +178,9 @@ export default handleActions({
         return state.set('loading', false)
                     .set('error', true);
     },
+    [COMMENT_LIST_SUCCESS]: (state, action) => {
+        const { data } = action.payload
+        return state.set('comments', List(data.map(comment=>Map(comment))));
+    }
 
 }, initialState)
