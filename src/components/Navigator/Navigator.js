@@ -2,7 +2,7 @@ import React from 'react';
 import {Button} from 'semantic-ui-react';
 import './Navigator.css'
 
-const Navigator = ({articleId, disabled}) => (
+const Navigator = ({onClick, articleId, disabled}) => (
     <div className="Navigate">
         <Button
             color="teal"
@@ -10,6 +10,9 @@ const Navigator = ({articleId, disabled}) => (
             icon="left arrow"
             labelPosition="left"
             disabled={disabled}
+            onClick={
+                    () => onClick('PREV')
+            }
         />
         <div className="Navigate-page-num">
             {articleId}
@@ -21,6 +24,9 @@ const Navigator = ({articleId, disabled}) => (
             labelPosition="right"
             className="Navigate-right-button"
             disabled={disabled}
+            onClick={
+                    () => onClick('NEXT')
+            }
         />
     </div>
 )

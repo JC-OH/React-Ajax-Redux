@@ -33,11 +33,20 @@ class PostContainer extends Component {
         get(articleId);
     }
 
+    handleNavigateClick = (type) => {
+        const {articleId, get} = this.props;
+        if(type === 'NEXT') {
+            get(articleId+1);
+        } else {
+            get(articleId-1);
+        }
+    }
+
     render() {
         //console.log(this.props.state.article.get('articles'));
         console.log(this.props.state.article.get('comments'));
         const {warningVisibility} = this.state;
-        const {articleId, fetching, article, comments, articles} = this.props;
+        const {get, articleId, fetching, article, comments, articles} = this.props;
         return (
             <PostWrapper>
                 <PostList
@@ -46,6 +55,7 @@ class PostContainer extends Component {
                 <Navigator
                     articleId={articleId}
                     disabled={fetching}
+                    onClick={this.handleNavigateClick}
                 />
                 <Post
                     articleId={articleId}

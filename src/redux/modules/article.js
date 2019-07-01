@@ -53,6 +53,8 @@ const initialState = Map({
 //--------------------------------------------------
 // Action Types
 //--------------------------------------------------
+// FOO, FOO_PENDING, FOO_FULFILLED, FOO_REJECTED
+
 // export const FETCH = 'FETCH';
 // export const FETCH_SUCCESS = 'FETCH_SUCCESS';
 // export const FETCH_FAILUREURE = 'FETCH_FAILUREURE';
